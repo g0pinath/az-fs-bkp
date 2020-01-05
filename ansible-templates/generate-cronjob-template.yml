@@ -1,0 +1,15 @@
+---
+- name: Generate the Cronjob template
+  hosts: localhost
+  any_errors_fatal: true
+  connection: local
+  gather_facts: false
+  vars_files:
+    - dynamic-cronjob-actual-values.yml
+  tasks:  
+    - name: Output FB servers
+      template:
+        src: cronjob-template-base.j2
+        dest: ../k8s-templates/cronjob-template-final-withvalues.yml
+      with_items: "{{ cronjob_names }}"
+

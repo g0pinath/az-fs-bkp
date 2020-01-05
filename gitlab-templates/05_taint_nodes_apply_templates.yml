@@ -1,0 +1,40 @@
+
+plan:nonprod:05_taint_nodes:
+  stage: 05_taint_nodes_apply_templates
+  script:
+    - cd k8s-scripts
+    - az login --service-principal --username $client_id --password $client_secret --tenant $tenant_id
+    - az account set --subscription=$subscription_id    
+    #- chmod +x install-kubectl.sh
+    #- ls install-kubectl.sh
+    #- ./install-kubectl.sh
+    - pwsh -File taint-nodes.ps1 -client_id $client_id -client_secret $client_secret -tenant_id $tenant_id -subscription_id $subscription_id -aks_rg_name $aks_rg_name  -aks_name $aks_name
+    - cd ..
+    - dir
+    - cd k8s-templates
+    - dir
+    #- az aks get-credentials --name AKS-DEV-FS-BKP --resource-group AZ-K8S-INFRA
+    - az aks get-credentials --name $aks_name --resource-group $aks_rg_name
+    - cat cronjob-template-final-withvalues.yml
+    - kubectl delete secret spn-creds -n dev --ignore-not-found=true
+    - kubectl create secret generic spn-creds --from-literal=servicePrincipalClientId=$client_id --from-literal=servicePrincipalClientSecret=$client_secret -n dev
+    - kubectl apply -f namespaces.yaml,rbac.yml 
+    - kubectl apply -f cronjob-template-final-withvalues.yml
+  environment:
+    name: nonprod
+  artifacts:
+    paths:
+      - ansible-templates/dynamic-cronjob-actual-values.yml
+  #when: manual#
+  only:
+    refs:
+      - master
+    changes:
+      - docker/dockerfile
+      - docker/scripts/*.csv
+      - docker/scripts/*.ps1
+      - docker/scripts/*.sh
+      - gitlab-templates/05_taint_nodes_apply_templates.yml
+      - j2-templates/scripts/*.ps1
+
+ 

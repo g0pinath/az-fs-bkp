@@ -1,0 +1,6 @@
+---
+cron_image_latest: azfsbkpacr.azurecr.io/az-fs-bkp:20200105_cb3dba65f5c5f4072e02f1b4668757a63d302c18
+cronjob_names:
+- cronjob-node0
+- cronjob-node1
+

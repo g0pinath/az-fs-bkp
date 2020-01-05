@@ -1,0 +1,45 @@
+
+plan:nonprod:02_build_dockerimage:
+  stage: 02_build_dockerimage
+  image: docker:stable
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  before_script: 
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker info
+    - export buildid=$(date +%Y)$(date +%m)$(date +%d)_$CI_COMMIT_SHA
+    - echo $buildid > buildid.txt
+    - cat buildid.txt    
+
+  script:
+    - cd docker    
+    - export buildid=$(date +%Y)$(date +%m)$(date +%d)_$CI_COMMIT_SHA
+    - echo $buildid > buildid.txt
+    - cat buildid.txt
+    - docker build -t $az_acr_name.azurecr.io/$az_acr_repo_name:$buildid .
+    - docker tag $az_acr_name.azurecr.io/$az_acr_repo_name:$buildid $base_gitlab_image_url
+    - docker push $base_gitlab_image_url
+    - echo  $az_acr_usr  $az_acr_pwd
+    - docker login $az_acr_name.azurecr.io -u $az_acr_usr -p $az_acr_pwd  #imagepullsecrets isnt working for me, so using az acr image.
+    - docker push $az_acr_name.azurecr.io/az-fs-bkp:$buildid    
+    
+  environment:
+    name: nonprod
+  artifacts:
+    paths:
+      - docker/buildid.txt
+      - buildid.txt
+  #when: manual
+  only:
+    refs:
+      - master
+    changes:
+      - docker/dockerfile
+      - docker/scripts/*.csv
+      - docker/scripts/*.ps1
+      - docker/scripts/*.sh
+      - gitlab-templates/02_build_dockerimage.yml
+      - j2-templates/scripts/*.ps1
