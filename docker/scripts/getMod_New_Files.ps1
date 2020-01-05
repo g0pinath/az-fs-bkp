@@ -169,8 +169,8 @@ Function FindFiles($i, $batchsize, $fileShareName, $timecus, $folderPath, $stora
 
          #$filenameshort = $files[$j].name  -- this is slow and also adds  GetDirectoryProperties API count by 100%. 
          #$Details = Get-AzStorageFile -Path "temp/$filenameshort" -ShareName $fileShareName
-        #new folders created are also captured in the createfileslist array, we need to filter this out.
-        #(Get-AzStorageFile -ShareName $fileShareName | where {$_.GetType().Name -eq "CloudFileDirectory"}).Name
+        #new folders created are also captured in the createfileslist array, we need to filter this out -- done in the later for loops
+        
         if($files[$j].properties.creationtime.UTCDateTime -gt $timecus)
         {
            [string]$fullpath = $folderPath+ "/" + $files[$j].Name  
@@ -205,7 +205,7 @@ Function FindFiles($i, $batchsize, $fileShareName, $timecus, $folderPath, $stora
 
  }
 
- 
+ #wait for all the jobs in the current share is over before moving on to the next share
     Do{
         start-sleep -Seconds 1
         $timeWaited+=1     
@@ -222,8 +222,9 @@ Function FindFiles($i, $batchsize, $fileShareName, $timecus, $folderPath, $stora
         $JobOutputModified+=$JobOutputModifiedtemp
         $JobOutputCreated+=$JobOutputCreatedtemp
     }
-    $JobOutputModified
-    $JobOutputCreated
+    write-output "output modified list for $filesharename is now" $JobOutputModified
+    write-output "output created list for $filesharename is now" $JobOutputCreated
+    $JobDetails = @()
 
     $dateFolder = get-date -Format yyyyMMdd
     New-Item -ItemType Directory $dateFolder/$filesharename/Modified -Force
@@ -231,38 +232,44 @@ Function FindFiles($i, $batchsize, $fileShareName, $timecus, $folderPath, $stora
     #Download the files and copy them locally with the same folder structure. This whole bundle can then be uploaded to BLOB as is.
     Foreach($file in $JobOutputModified)
     {
-        [string]$LocalFolderPath =""
-        Get-AzStorageFileContent -Path $file -ShareName $fileShareName -Force
-        $FolderNamesArray = $file -split "/" 
-        $foldersNameCount = ($file -split "/" |Measure).Count-2 
+            #to filter the folders that somehow come in this list generated.
+            if(Get-AzStorageFile -ShareName $fileShareName -path $file |where {$_.GetType().Name -ne "CloudFileDirectory"})
+            {
+                [string]$LocalFolderPath =""
+                Get-AzStorageFileContent -Path $file -ShareName $fileShareName -Force
+                $FolderNamesArray = $file -split "/" 
+                $foldersNameCount = ($file -split "/" |Measure).Count-2 
 
-        For($i=0;$i-le $foldersNameCount;$i+=1)
-        {
-            $LocalFolderPath += $FolderNamesArray[$i] + "/"
-        }
+                For($i=0;$i-le $foldersNameCount;$i+=1)
+                {
+                    $LocalFolderPath += $FolderNamesArray[$i] + "/"
+                }
 
-    $actualFileName = $FolderNamesArray[$foldersNameCount+1]    
-    New-Item -ItemType Directory -Force -Path $dateFolder/$filesharename/Modified/$LocalFolderPath
-    Copy-Item $actualFileName $dateFolder/$filesharename/Modified/$LocalFolderPath -Force
-
+                $actualFileName = $FolderNamesArray[$foldersNameCount+1]    
+                New-Item -ItemType Directory -Force -Path $dateFolder/$filesharename/Modified/$LocalFolderPath
+                Copy-Item $actualFileName $dateFolder/$filesharename/Modified/$LocalFolderPath -Force
+            }
     }
 
     Foreach($file in $JobOutputCreated)
     {
-        [string]$LocalFolderPath =""
-        Get-AzStorageFileContent -Path $file -ShareName $fileShareName -Force
-        $FolderNamesArray = $file -split "/" 
-        $foldersNameCount = ($file -split "/" |Measure).Count-2 
-        For($i=0;$i-le $foldersNameCount;$i+=1)
+        #to filter the folders that somehow come in this list generated.
+        if(Get-AzStorageFile -ShareName $fileShareName -path $file |where {$_.GetType().Name -ne "CloudFileDirectory"})
         {
-            $LocalFolderPath += $FolderNamesArray[$i] + "/"
+            [string]$LocalFolderPath =""
+            Get-AzStorageFileContent -Path $file -ShareName $fileShareName -Force
+            $FolderNamesArray = $file -split "/" 
+            $foldersNameCount = ($file -split "/" |Measure).Count-2 
+            For($i=0;$i-le $foldersNameCount;$i+=1)
+            {
+                $LocalFolderPath += $FolderNamesArray[$i] + "/"
+            }
+            Write-host "---"$LocalFolderPath
+            $actualFileName = $FolderNamesArray[$foldersNameCount+1]
+            write-host "actualfilename" $actualFileName
+            New-Item -ItemType Directory -Force -Path $dateFolder/$filesharename/Created/$LocalFolderPath
+            Copy-Item $actualFileName $dateFolder/$filesharename/Created/$LocalFolderPath -Force
         }
-        Write-host "---"$LocalFolderPath
-        $actualFileName = $FolderNamesArray[$foldersNameCount+1]
-        write-host "actualfilename" $actualFileName
-        New-Item -ItemType Directory -Force -Path $dateFolder/$filesharename/Created/$LocalFolderPath
-        Copy-Item $actualFileName $dateFolder/$filesharename/Created/$LocalFolderPath -Force
-
     }
  }#end of all shares
 
@@ -274,6 +281,6 @@ cd  /azcopy_v10/azcopy_linux_amd64_10.3.3
 #set the destination storage account context.
 Set-AzCurrentStorageAccount -ResourceGroupName $storageAccountRGDest -StorageAccountName $storageAccountNameDest | Out-Null #to suppress output.
 $sasToken = New-AzStorageContainerSASToken -Name "$destContainer" -Permission rwdl
-azcopy copy "/$dateFolder" "https://$storageAccountNameDest.blob.core.windows.net/$destContainer/$sasToken" --recursive=true
+./azcopy copy "/$dateFolder" "https://$storageAccountNameDest.blob.core.windows.net/$destContainer/$sasToken" --recursive=true
 
 start-sleep -s 60000
