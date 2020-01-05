@@ -1,12 +1,12 @@
 ﻿
  
 # Define Variables
-$subscriptionName = "DCP-IT-IAAS-N-01"
-$storageAccountRG = "AS-CN-DCP-D-FILEBOUND-RG"
-$storageAccountName = "ascndcpfbstorage01"
-$fileShareName = "test-fs-bkp"
+$subscriptionName = ""
+$storageAccountRG = ""
+$storageAccountName = ""
+$fileShareName = ""
 $localPath = "c:\temp"
-$vaultname = "ASCNDCPBKPVLT010" 
+$vaultname = "" 
 $targetRestoredFileShare = "testfs-bkp-restored"
 $backupItemName = "AzureFileShare;"+ $fileShareName# example AzureFileShare;testfsbkp
 

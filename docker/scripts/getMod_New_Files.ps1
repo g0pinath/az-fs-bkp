@@ -169,7 +169,8 @@ Function FindFiles($i, $batchsize, $fileShareName, $timecus, $folderPath, $stora
 
          #$filenameshort = $files[$j].name  -- this is slow and also adds  GetDirectoryProperties API count by 100%. 
          #$Details = Get-AzStorageFile -Path "temp/$filenameshort" -ShareName $fileShareName
-
+        #new folders created are also captured in the createfileslist array, we need to filter this out.
+        #(Get-AzStorageFile -ShareName $fileShareName | where {$_.GetType().Name -eq "CloudFileDirectory"}).Name
         if($files[$j].properties.creationtime.UTCDateTime -gt $timecus)
         {
            [string]$fullpath = $folderPath+ "/" + $files[$j].Name  

@@ -1,7 +1,7 @@
 
 plan:nonprod:03_build-inputfile-dynamic-cronjob-actual-values-yml:
   stage: 03_build-inputfile-dynamic-cronjob-actual-values-yml
-  #image: registry.gitlab.com/g0pinath/az-fs-bkp:base
+  
   script:
     - export buildid=$(cat buildid.txt)
     - echo $buildid

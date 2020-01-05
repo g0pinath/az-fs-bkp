@@ -1,15 +1,15 @@
 variable "RGName_AKS" {
-  default = "AZ-K8S-INFRA"
+  default = ""
 }
 variable "RGLocation" {
-  default = "AUSTRALIA SOUTHEAST"
+  default = ""
 }
 
 variable "AKSClusterName" {
-  default = "AKS-DEV-FS-BKP"
+  default = ""
 }
 variable "AKSDNSPrefix" {
-  default = "aksdevfsbkp"
+  default = ""
 }
 variable "node_count" {
   type = number
@@ -20,10 +20,10 @@ variable "Node_Size" {
   default = "Standard_D2_v2"
 }
 variable "client_id" {
-  default = "a6d4fa75-117e-478d-b370-a634f613b7a5"
+  default = ""
 }
 variable "client_secret" {
-  default = "?Xjoi0AEVQ9ggNiLiQMtiB=D-GvEh03@"
+  default = ""
 }
 
 
