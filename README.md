@@ -41,9 +41,9 @@ tf-templates/backend.tf, provider.tf, vars.tf, k8s-infra.tf
 
 Limitations:
 
-Do not create files directly under the share, those will be skipped. Typically in production you dont, so I didnt bother including that logic.
-Dont be too agressive and increase the batch count in the script, it will actually slow things down depending on the number of parallel jobs running against the storage account.
-There cant be more than 100 lines, as AKS node limitation is set to 100. If you spread your files across say 25 storage accounts each having about 4 million files, then this should complete in about 5 hours. Again the bottleneck is the storage account, so spreading this across 50 storage accounts will halve the time. With premium storage this should be reducing even further.
+  - Do not create files directly under the share, those will be skipped. Typically in production you dont, so I didnt bother including that logic.
+  - Dont be too agressive and increase the batch count in the script, it will actually slow things down depending on the number of parallel jobs running against the storage account.
+  - There cant be more than 100 lines, as AKS node limitation is set to 100. If you spread your files across say 25 storage accounts each having about 4 million files, then this should complete in about 5 hours. Again the bottleneck is the storage account, so spreading this across 50 storage accounts will halve the time. With premium storage this should be reducing even further.
 
 Example for the input file inputCSV.csv:
 
