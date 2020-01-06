@@ -43,18 +43,18 @@ Limitations:
 
 Do not create files directly under the share, those will be skipped. Typically in production you dont, so I didnt bother including that logic.
 Dont be too agressive and increase the batch count in the script, it will actually slow things down depending on the number of parallel jobs running against the storage account.
+There cant be more than 100 lines, as AKS node limitation is set to 100. If you spread your files across say 25 storage accounts each having about 4 million files, then this should complete in about 5 hours. Again the bottleneck is the storage account, so spreading this across 50 storage accounts will halve the time. With premium storage this should be reducing even further.
 
 Example for the input file inputCSV.csv:
-In the below example, line will be running on node0 that parses 2 file shares while the second line parses only 1.
-If you want to go through all of the shares in a storage account, put a * and don't overlap the file shares across different lines as they will collide.
 
-tenantID	subscriptionName	storageAccountRG	storageAccountName	FileShares	storageAccountRGDest	storageAccountNameDest	destContainer
-9deab971-f9a9-4f67-b314-d00630c8e2d4	FREE TRIAL	AZ-K8S-FSBKP	safsbkpsource	src-fs-1,src-fs-2	AZ-K8S-FSBKP	azfsbkptf	backup
-9deab971-f9a9-4f67-b314-d00630c8e2d4	FREE TRIAL	AZ-K8S-FSBKP	safsbkpsource	src-fs	AZ-K8S-FSBKP	azfsbkptf	backup
+    In the example given in the repo, line1 will be running on node0 that parses 2 file shares while the second line parses only 1.
+  
+    If you want to go through all of the shares in a storage account, put a * and don't overlap the file shares across different lines as they will collide.
 
 ToDO
  
  - Comprehensive error logging and consolidate the reports across all the nodes and email it.
+ - Scale in the nodes after the cronjob has completed, after the backup job, only 1 node should be running - node0.
  - Implement strategy to store deleted files - store the file index daily in an Az table and compare it next day.
  - Store daily results in an Azure table or elsewhere so its easy to query and get a report on demand.
  - Handling failures - run backups against file shares on an ad-hoc basis.
