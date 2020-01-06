@@ -27,14 +27,14 @@ High-level steps
  
  GITLAB CI Variables required.
  
- The following GITLAB variables needs to be setup.
-for TF -- ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID,
-for git -- CI_DEPLOY_USER(user name of gitlab), GIT_PUSH_URL(git url to push), GIT_TOKEN
-for kubectl, scripts to taint -- aks_name, aks_rg_name
-for docker to push -- az_acr_name, az_acr_pwd, az_acr_repo_name, az_acr_usr
+The following GITLAB variables needs to be setup.
+  - for TF -- ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID,
+  - for git -- CI_DEPLOY_USER(user name of gitlab), GIT_PUSH_URL(git url to push), GIT_TOKEN
+  - for kubectl, scripts to taint -- aks_name, aks_rg_name
+  - for docker to push -- az_acr_name, az_acr_pwd, az_acr_repo_name, az_acr_usr
     create the acr credentials manually and then update the gitlab variables section before proceeding to the other stages.
-for gitlab -- base_gitlab_image_url
-for tf -- client_id, client_secret, subscription_id, tenant_id
+  - for gitlab -- base_gitlab_image_url
+  - for tf -- client_id, client_secret, subscription_id, tenant_id
 
 The following files needs to be updated with values for your environment.
 tf-templates/backend.tf, provider.tf, vars.tf, k8s-infra.tf
