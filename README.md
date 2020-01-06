@@ -28,6 +28,25 @@ High-level steps
  GITLAB CI Variables required.
  
  The following GITLAB variables needs to be setup.
-ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, CI_DEPLOY_USER, GIT_PUSH_URL,
-GIT_TOKEN, aks_name, aks_rg_name, az_acr_name, az_acr_pwd, az_acr_repo_name, az_acr_usr, base_gitlab_image_url, client_id,
-client_secret,  subscription_id, tenant_id
+for TF -- ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID,
+for git -- CI_DEPLOY_USER(user name of gitlab), GIT_PUSH_URL(git url to push), GIT_TOKEN
+for kubectl, scripts to taint -- aks_name, aks_rg_name
+for docker to push -- az_acr_name, az_acr_pwd, az_acr_repo_name, az_acr_usr
+    create the acr credentials manually and then update the gitlab variables section before proceeding to the other stages.
+for gitlab -- base_gitlab_image_url
+for tf -- client_id, client_secret, subscription_id, tenant_id
+
+The following files needs to be updated with values for your environment.
+tf-templates/backend.tf, provider.tf, vars.tf, k8s-infra.tf
+
+Limitations:
+
+Do not create files directly under the share, those will be skipped. Typically in production you dont, so I didnt bother including that logic.
+Dont be too agressive and increase the batch count in the script, it will actually slow things down depending on the number of parallel jobs running against the storage account.
+
+ToDO
+ 
+ - Comprehensive error logging and consolidate the reports across all the nodes and email it.
+ - Implement strategy to store deleted files - store the file index daily in an Az table and compare it next day.
+ - Store daily results in an Azure table or elsewhere so its easy to query and get a report on demand.
+ - Handling failures - run backups against file shares on an ad-hoc basis.
