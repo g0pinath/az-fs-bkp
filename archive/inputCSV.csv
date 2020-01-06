@@ -1,2 +1,0 @@
-TenantID,SubscriptionName,ResourceGroupName,StorageAccountName,FileShares,Node
-9deab971-f9a9-4f67-b314-d00630c8e2d4,FREE TRIAL,AZ-K8S-FSBKP,safsbkpsource,*,Node0
