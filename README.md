@@ -44,6 +44,14 @@ Limitations:
 Do not create files directly under the share, those will be skipped. Typically in production you dont, so I didnt bother including that logic.
 Dont be too agressive and increase the batch count in the script, it will actually slow things down depending on the number of parallel jobs running against the storage account.
 
+Example for the input file inputCSV.csv:
+In the below example, line will be running on node0 that parses 2 file shares while the second line parses only 1.
+If you want to go through all of the shares in a storage account, put a * and don't overlap the file shares across different lines as they will collide.
+
+tenantID	subscriptionName	storageAccountRG	storageAccountName	FileShares	storageAccountRGDest	storageAccountNameDest	destContainer
+9deab971-f9a9-4f67-b314-d00630c8e2d4	FREE TRIAL	AZ-K8S-FSBKP	safsbkpsource	src-fs-1,src-fs-2	AZ-K8S-FSBKP	azfsbkptf	backup
+9deab971-f9a9-4f67-b314-d00630c8e2d4	FREE TRIAL	AZ-K8S-FSBKP	safsbkpsource	src-fs	AZ-K8S-FSBKP	azfsbkptf	backup
+
 ToDO
  
  - Comprehensive error logging and consolidate the reports across all the nodes and email it.
