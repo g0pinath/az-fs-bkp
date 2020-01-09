@@ -1,3 +1,3 @@
 tenantID,subscriptionName,storageAccountRG,storageAccountName,FileShares,storageAccountRGDest,storageAccountNameDest,destContainer
-9deab971-f9a9-4f67-b314-d00630c8e2d4,FREE TRIAL,AZ-K8S-FSBKP,safsbkpsource,"src-fs",AZ-K8S-FSBKP,azfsbkptf,backup
-9deab971-f9a9-4f67-b314-d00630c8e2d4,FREE TRIAL,AZ-K8S-FSBKP,safsbkpsource,"src-fs-5",AZ-K8S-FSBKP,azfsbkptf,backup
+9deab971-f9a9-4f67-b314-d00630c8e2d4,FREE TRIAL,AZ-K8S-FSBKP,safsbkpsource,"src-fs,src-fs-1,src-fs-2,src-fs-3,src-fs-4",AZ-K8S-FSBKP,azfsbkptf,backup
+9deab971-f9a9-4f67-b314-d00630c8e2d4,FREE TRIAL,AZ-K8S-FSBKP,safsbkpsource,"src-fs-5,src-fs-6,src-fs-7,src-fs-8,src-fs-9",AZ-K8S-FSBKP,azfsbkptf,backup
