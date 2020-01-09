@@ -24,6 +24,10 @@ High-level steps
   - 04_build-cronjob-actual-template-yml - build the cronjob template using the ansible-templates/dynamic-cronjob-actual-values.yml as input for values and cronjob-values-base.yml as template using ansible/j2.
   
   -   05_taint_nodes_apply_templates - taint the nodes so that each node runs exactly one cron job.
+  
+  -   cron_job_check_status_scalein_nodes - this schedule needs to be 30 minutes before the schedule defined for the cronjobs.
+  
+  -   cron_job_start_backup_scaleout_nodes - this schedule needs to be 30 minutes after the schedule defined for the cronjobs.
  
  GITLAB CI Variables required.
  
@@ -35,6 +39,26 @@ The following GITLAB variables needs to be setup.
     create the acr credentials manually and then update the gitlab variables section before proceeding to the other stages.
   - for gitlab -- base_gitlab_image_url
   - for tf -- client_id, client_secret, subscription_id, tenant_id
+  - for cronjobs - update in 3 places
+  
+      Under the main project settings CI / CD -- variables
+        cron_job_backup_finished - value - FALSE
+        cron_job_backup_started - value - FALSE
+        cron_job_triggered - value - FALSE
+  -----------------------------------------------------------
+      Under the CI / CD - schedules  --  set the below variables
+       For the schedule - cron_job_start_backup_scaleout_nodes
+        cron_job_backup_finished - value - FALSE
+        cron_job_backup_started - value - TRUE
+        cron_job_triggered - value - TRUE
+            Under the CI / CD - schedules  --  set the below variables
+----------------------------------------------------------------           
+       For the schedule - cron_job_check_status_scalein_nodes
+        cron_job_backup_finished - value - TRUE
+        cron_job_backup_started - value - FALSE
+        cron_job_triggered - value - TRUE
+      
+
 
 The following files needs to be updated with values for your environment.
 tf-templates/backend.tf, provider.tf, vars.tf, k8s-infra.tf
@@ -54,7 +78,6 @@ Example for the input file inputCSV.csv:
 ToDO
  
  - Comprehensive error logging and consolidate the reports across all the nodes and email it.
- - Scale in the nodes after the cronjob has completed, after the backup job, only 1 node should be running - node0.
  - Implement strategy to store deleted files - store the file index daily in an Az table and compare it next day.
  - Store daily results in an Azure table or elsewhere so its easy to query and get a report on demand.
  - Handling failures - run backups against file shares on an ad-hoc basis.
