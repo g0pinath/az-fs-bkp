@@ -1,0 +1,29 @@
+
+plan:nonprod:03_build-inputfile-dynamic-cronjob-actual-values-yml:
+  stage: 03_build-inputfile-dynamic-cronjob-actual-values-yml
+  
+  script:
+    - export buildid=$(cat buildid.txt)
+    - echo $buildid
+    - ansible --version
+    #store the build id into the input yml file for future use by j2. j2 uses dynamic-cronjob-actual-values.yml as input to generate the cronjob template.
+    - pwsh -file j2-templates/scripts/gen-allValues-forJ2.ps1 
+  environment:
+    name: nonprod
+  artifacts:
+    paths:
+      - ansible-templates/dynamic-cronjob-actual-values.yml
+  when: manual
+  only:
+    variables: [ $cron_job_triggered == "FALSE" ]
+    refs:
+      - master
+    changes:
+      - docker/dockerfile
+      - docker/scripts/*.csv
+      - docker/scripts/*.ps1
+      - docker/scripts/*.sh
+      - gitlab-templates/03_build-inputfile-dynamic-cronjob-actual-values-yml.yml
+      - j2-templates/scripts/*.ps1
+
+

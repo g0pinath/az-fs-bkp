@@ -1,0 +1,41 @@
+plan:nonprod:04_build-cronjob-actual-template-yml:
+  stage: 04_build-cronjob-actual-template-yml
+  script:
+    - ansible --version
+    - cat ansible-templates/dynamic-cronjob-actual-values.yml
+    - cd ansible-templates
+    #store the build id into the input yml file for future use by j2. j2 uses dynamic-cronjob-actual-values.yml as input to generate the cronjob template.
+    - ansible-playbook --connection=local --inventory 127.0.0.1, generate-cronjob-template.yml
+    - cat ../k8s-templates/cronjob-template-final-withvalues.yml
+    - mkdir ../../temp_repos    
+    #- apt install git -y
+    - git clone $CI_REPOSITORY_URL  ../../temp_repos 
+    - cp ../k8s-templates/cronjob-template-final-withvalues.yml ../../temp_repos/k8s-templates/cronjob-template-final-withvalues.yml
+    - cp dynamic-cronjob-actual-values.yml ../../temp_repos/ansible-templates/dynamic-cronjob-actual-values.yml
+    - cd ../../temp_repos
+    - git config --global user.name $CI_DEPLOY_USER #https://docs.gitlab.com/ee/user/project/deploy_tokens/index.html#gitlab-deploy-token
+    - git config --global user.email $GITLAB_USER_EMAIL
+    - git add --all
+    - git commit -m "update from GIT pipeline -- triggered by $GITLAB_USER_EMAIL "
+    - git push $GIT_PUSH_URL HEAD:master #set in pipeline variable.
+    
+  environment:
+    name: nonprod
+  artifacts:
+    paths:
+      - ansible-templates/dynamic-cronjob-actual-values.yml
+      - k8s-templates/cronjob-template-final-withvalues.yml
+  when: manual
+  only:
+    variables: [ $cron_job_triggered == "FALSE" ]
+    refs:
+      - master
+    changes:
+      - docker/dockerfile
+      - docker/scripts/*.csv
+      - docker/scripts/*.ps1
+      - docker/scripts/*.sh
+      - gitlab-templates/04_build-cronjob-actual-template-yml.yml
+      - j2-templates/scripts/*.ps1
+
+

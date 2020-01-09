@@ -1,0 +1,30 @@
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-contributor
+  namespace: dev
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-contributor-role-binding
+  namespace: dev
+subjects:
+- kind: User
+  name: gopiazbkp@outlook.com
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dev-contributor
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
