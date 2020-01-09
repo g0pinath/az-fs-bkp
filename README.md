@@ -39,6 +39,7 @@ The following GITLAB variables needs to be setup.
     create the acr credentials manually and then update the gitlab variables section before proceeding to the other stages.
   - for gitlab -- base_gitlab_image_url
   - for tf -- client_id, client_secret, subscription_id, tenant_id
+  - for scaling in - aks_infra_nodes_name (this is the name of the RG that is getting created with MC_ prefix), aks_vmss_name
   - for cronjobs - update in 3 places
   
       Under the main project settings CI / CD -- variables
