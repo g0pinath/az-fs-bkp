@@ -7,7 +7,7 @@ metadata:
   name: {{cronjob_name}}
   namespace: dev
 spec:
-  schedule: "0,15,30,45 * * * 0-6" #"0 3,22 * * 1-5" -- summer -- "0 2,23 * * 1-5" during winter GMT <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
+  schedule: "0 12 * * 0-6" # daily at 12 pm GMT == 11 pm AEST <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
   jobTemplate:
       spec:
         template:

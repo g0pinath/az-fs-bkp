@@ -283,4 +283,3 @@ Set-AzCurrentStorageAccount -ResourceGroupName $storageAccountRGDest -StorageAcc
 $sasToken = New-AzStorageContainerSASToken -Name "$destContainer" -Permission rwdl
 ./azcopy copy "/$dateFolder" "https://$storageAccountNameDest.blob.core.windows.net/$destContainer/$sasToken" --recursive=true
 
-#start-sleep -s 60000 #set this if you want to get into the pod to troubleshoot.

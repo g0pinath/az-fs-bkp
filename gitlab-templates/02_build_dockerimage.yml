@@ -32,8 +32,9 @@ plan:nonprod:02_build_dockerimage:
     paths:
       - docker/buildid.txt
       - buildid.txt
-  #when: manual
+  when: manual
   only:
+    variables: [ $cron_job_triggered == "FALSE" ]
     refs:
       - master
     changes:
@@ -43,3 +44,4 @@ plan:nonprod:02_build_dockerimage:
       - docker/scripts/*.sh
       - gitlab-templates/02_build_dockerimage.yml
       - j2-templates/scripts/*.ps1
+

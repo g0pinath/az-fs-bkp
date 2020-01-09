@@ -25,8 +25,9 @@ plan:nonprod:05_taint_nodes:
   artifacts:
     paths:
       - ansible-templates/dynamic-cronjob-actual-values.yml
-  #when: manual#
+  when: manual
   only:
+    variables: [ $cron_job_triggered == "FALSE" ]
     refs:
       - master
     changes:
@@ -36,5 +37,7 @@ plan:nonprod:05_taint_nodes:
       - docker/scripts/*.sh
       - gitlab-templates/05_taint_nodes_apply_templates.yml
       - j2-templates/scripts/*.ps1
+    
+
 
  

@@ -6,7 +6,7 @@ metadata:
   name: cronjob-node0
   namespace: dev
 spec:
-  schedule: "0,15,30,45 * * * 0-6" #"0 3,22 * * 1-5" -- summer -- "0 2,23 * * 1-5" during winter GMT <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
+  schedule: "0 8,12 * * 0-6" # daily at 12 pm GMT == 11 pm AEST <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
   jobTemplate:
       spec:
         template:
@@ -18,7 +18,7 @@ spec:
                 effect: NoSchedule
             containers:
             - name: cronjob-node0
-              image: azfsbkpacr.azurecr.io/az-fs-bkp:20200105_cb3dba65f5c5f4072e02f1b4668757a63d302c18
+              image: azfsbkpacr.azurecr.io/az-fs-bkp:20200108_31fb775ff11343aa14a763c113f6a232617ebdf9
               env:
               - name: nodenumber
                 value: cronjob-node0
@@ -39,7 +39,7 @@ metadata:
   name: cronjob-node1
   namespace: dev
 spec:
-  schedule: "0,15,30,45 * * * 0-6" #"0 3,22 * * 1-5" -- summer -- "0 2,23 * * 1-5" during winter GMT <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
+  schedule: "0 6,12 * * 0-6" # daily at 12 pm GMT == 11 pm AEST <Mins> <HourinGMT> <DayofMonth> <Month> <DayofWeek> Ex run 1 pm GMT every monday * 13 * * 1
   jobTemplate:
       spec:
         template:
@@ -51,7 +51,7 @@ spec:
                 effect: NoSchedule
             containers:
             - name: cronjob-node1
-              image: azfsbkpacr.azurecr.io/az-fs-bkp:20200105_cb3dba65f5c5f4072e02f1b4668757a63d302c18
+              image: azfsbkpacr.azurecr.io/az-fs-bkp:20200108_31fb775ff11343aa14a763c113f6a232617ebdf9
               env:
               - name: nodenumber
                 value: cronjob-node1

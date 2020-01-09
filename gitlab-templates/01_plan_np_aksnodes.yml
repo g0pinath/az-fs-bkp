@@ -14,8 +14,9 @@ plan:nonprod:build_aks_infra_np:
   artifacts:
     paths:
       - tf-templates/nonprod/run.plan
-  #when: manua
+  when: manual
   only:
+    variables: [ $cron_job_triggered == "FALSE" ]
     refs:
       - master
     changes:
@@ -25,4 +26,6 @@ plan:nonprod:build_aks_infra_np:
       - docker/scripts/*.csv
       - docker/scripts/*.ps1
       - gitlab-templates/v01_plan_np_aksnodes.yml
+
+
  

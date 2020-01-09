@@ -13,8 +13,9 @@ plan:nonprod:03_build-inputfile-dynamic-cronjob-actual-values-yml:
   artifacts:
     paths:
       - ansible-templates/dynamic-cronjob-actual-values.yml
-  #when: manual
+  when: manual
   only:
+    variables: [ $cron_job_triggered == "FALSE" ]
     refs:
       - master
     changes:
@@ -24,3 +25,5 @@ plan:nonprod:03_build-inputfile-dynamic-cronjob-actual-values-yml:
       - docker/scripts/*.sh
       - gitlab-templates/03_build-inputfile-dynamic-cronjob-actual-values-yml.yml
       - j2-templates/scripts/*.ps1
+
+

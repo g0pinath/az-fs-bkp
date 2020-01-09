@@ -25,8 +25,9 @@ plan:nonprod:04_build-cronjob-actual-template-yml:
     paths:
       - ansible-templates/dynamic-cronjob-actual-values.yml
       - k8s-templates/cronjob-template-final-withvalues.yml
-  #when: manual
+  when: manual
   only:
+    variables: [ $cron_job_triggered == "FALSE" ]
     refs:
       - master
     changes:
@@ -36,3 +37,5 @@ plan:nonprod:04_build-cronjob-actual-template-yml:
       - docker/scripts/*.sh
       - gitlab-templates/04_build-cronjob-actual-template-yml.yml
       - j2-templates/scripts/*.ps1
+
+
